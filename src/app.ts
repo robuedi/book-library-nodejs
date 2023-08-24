@@ -1,13 +1,34 @@
-import express, { Application, Request, Response } from 'express';
+import express, { Application } from "express"
+import cors, { CorsOptions } from "cors"
+import Routes from "./routes";
+import Database from "./db";
 
-const app: Application = express();
+export default class App {
+  public app: Application;
 
-const PORT: number = 3001;
+  constructor(app: Application) {
+    this.app = app
+    this.config();
+    this.syncDatabase();
+    this.routes();
+  }
 
-app.use('/', (req: Request, res: Response): void => {
-    res.send('Hello world!');
-});
+  private config(): void {
+    const corsOptions: CorsOptions = {
+      origin: "http://localhost"
+    };
 
-app.listen(PORT, (): void => {
-    console.log('SERVER IS UP ON PORT:', PORT);
-});
+    this.app.use(cors(corsOptions));
+    this.app.use(express.json());
+    this.app.use(express.urlencoded({ extended: true }));
+  }
+
+  private routes() {
+    new Routes(this.app)
+  }
+
+  private syncDatabase(): void {
+    const db = new Database();
+    db.sequelize?.sync();
+  }
+}
