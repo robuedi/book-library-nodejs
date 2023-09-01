@@ -1,33 +1,29 @@
-import express, { Application } from "express"
-import cors, { CorsOptions } from "cors"
+import { Application } from "express"
 import Routes from "./routes";
-import Database from "./db";
+import Database from "./database";
+import coreMiddleware from './middleware/core';
+import securityiddleware from './middleware/security';
 
 export default class App {
   public app: Application;
 
   constructor(app: Application) {
     this.app = app
-    this.config();
-    this.syncDatabase();
+    this.middleware();
+    this.database();
     this.routes();
   }
 
-  private config(): void {
-    const corsOptions: CorsOptions = {
-      origin: "http://localhost"
-    };
-
-    this.app.use(cors(corsOptions));
-    this.app.use(express.json());
-    this.app.use(express.urlencoded({ extended: true }));
+  private middleware(): void {
+    this.app.use(securityiddleware)
+    this.app.use(coreMiddleware)
   }
 
   private routes() {
     new Routes(this.app)
   }
 
-  private syncDatabase(): void {
+  private database(): void {
     const db = new Database();
     db.sequelize?.sync();
   }

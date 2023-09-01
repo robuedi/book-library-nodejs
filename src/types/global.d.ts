@@ -2,7 +2,7 @@ import { Dialect } from "sequelize"
 
 namespace NodeJS {
     interface ProcessEnv {
-        APP_ENV: string
+        NODE_ENV: string
         APP_PORT: number
         DB_DIALECT: Dialect
         DB_HOST: string

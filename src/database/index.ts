@@ -1,7 +1,9 @@
 import { Sequelize } from "sequelize-typescript";
 import  config from "../config/config";
 
-class Database {
+import User from "../models/User"
+
+export default class Database {
   public sequelize: Sequelize | undefined;
 
   constructor() {
@@ -21,7 +23,7 @@ class Database {
         acquire: config.DB_POOL_ACQUIRE,
         idle: config.DB_POOL_IDLE
       },
-      models: []
+      models: [User]
     });
 
     await this.sequelize
@@ -34,5 +36,3 @@ class Database {
       });
   }
 }
-
-export default Database
