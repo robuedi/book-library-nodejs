@@ -9,13 +9,13 @@ export class AuthorsController {
     });
   }
 
-  create(req: Request, res: Response): void {
+  store(req: Request, res: Response): void {
     Author.create(req.body).then((data)=>{
       return res.json({ data: data});
     })
   }
 
-  getOne(req: Request, res: Response) : void{
+  show(req: Request, res: Response) : void{
     Author.findByPk(req.params.id).then((data)=>{
       return res.json({ data: data});
     })
