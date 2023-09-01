@@ -11,9 +11,9 @@ const authorsController = new AuthorsController()
 
 //Routes
 router.get(`${base}`, authorsController.index)
-router.post(`${base}`, authorsController.create)
+router.post(`${base}`, authorsController.store)
 router.put(`${base}/:id`, authorsController.update)
 router.delete(`${base}/:id`, authorsController.delete)
-router.get(`${base}/:id`, authorsController.getOne)
+router.get(`${base}/:id`, authorsController.show)
 
 export default router
