@@ -1,5 +1,5 @@
 import { Application } from "express"
-import Routes from "./routes";
+import routes from "./routes";
 import Database from "./database";
 import coreMiddleware from './middleware/core';
 import securityiddleware from './middleware/security';
@@ -20,7 +20,7 @@ export default class App {
   }
 
   private routes() {
-    new Routes(this.app)
+    this.app.use(routes)
   }
 
   private database(): void {

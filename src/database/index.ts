@@ -2,6 +2,7 @@ import { Sequelize } from "sequelize-typescript";
 import  config from "../config/config";
 
 import User from "../models/User"
+import Author from "../models/Author"
 
 export default class Database {
   public sequelize: Sequelize | undefined;
@@ -23,7 +24,7 @@ export default class Database {
         acquire: config.DB_POOL_ACQUIRE,
         idle: config.DB_POOL_IDLE
       },
-      models: [User]
+      models: [User, Author]
     });
 
     await this.sequelize
