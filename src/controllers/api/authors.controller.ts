@@ -1,49 +1,62 @@
-import Author from "../../models/Author";
-import { Request, Response } from "express";
+import Author from '../../models/Author';
+import { NextFunction, Request, Response } from "express";
+import { StatusCodes, ReasonPhrases } from 'http-status-codes';
 
 export class AuthorsController {
 
-  index(req: Request, res: Response) : void{
-    Author.findAll().then((data)=>{
-      return res.json({ data: data ? data : [] });
-    });
+  async index(req: Request, res: Response, next: NextFunction){
+    try{
+      const authors = await Author.findAll()
+      res.status(StatusCodes.OK).json({ data: authors ? authors : [] });
+    }
+    catch(error){
+      next(error)
+    }
   }
 
-  store(req: Request, res: Response): void {
-    Author.create(req.body).then((data)=>{
-      return res.json({ data: data});
-    })
+  async store(req: Request, res: Response, next: NextFunction) {
+    try{
+      let {name} = req.body
+      const author = await Author.create({name})
+      res.status(StatusCodes.CREATED).json({ data: author});
+    }
+    catch(error){
+      next(error)
+    }
   }
 
-  show(req: Request, res: Response) : void{
-    Author.findByPk(req.params.id).then((data)=>{
-      return res.json({ data: data});
-    })
+  async show(req: Request, res: Response, next: NextFunction){
+    try{
+      const author = await Author.findByPk(req.params.id)
+      res.status(StatusCodes.OK).json({ data: author});
+    }
+    catch(error){
+      next(error)
+    }
   }
 
-  update(req: Request, res: Response): void {
-    Author.findByPk(req.params.id).then((author)=>{
-      if(author){
-        author.update(req.body)
-        Author.findByPk(req.params.id).then((data)=>{
-          return res.json({ data: data});
-        })
-      }
-      else{
-        return res.json({ message: "author not found" });
-      }
-    })
+  async update(req: Request, res: Response, next: NextFunction) {
+    try{
+      let {name} = req.body
+      await Author.update({ name }, {
+        where: { id: req.params.id }
+      });
+      return res.status(StatusCodes.NO_CONTENT).json({ message: ReasonPhrases.NO_CONTENT });
+    }
+    catch(error){
+      next(error)
+    }
   }
 
-  delete(req: Request, res: Response): void {
-    Author.findByPk(req.params.id).then((author)=>{
-      if(author){
-        author.destroy()
-        return res.json({ message: "author deleted" });
-      }
-      else{
-        return res.json({ message: "author not found" });
-      }
-    })
+  async delete(req: Request, res: Response, next: NextFunction) {
+    try{
+      await Author.destroy({
+        where: { id: req.params.id }
+      });
+      res.status(StatusCodes.NO_CONTENT).json({ message: ReasonPhrases.NO_CONTENT });
+    }
+    catch(error){
+      next(error)
+    }
   }
 }
