@@ -24,7 +24,6 @@ export default class App {
   }
 
   private database(): void {
-    const db = new Database();
-    db.sequelize?.sync();
+    new Database();
   }
 }

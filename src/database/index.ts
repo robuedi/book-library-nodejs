@@ -9,6 +9,7 @@ export default class Database {
 
   constructor() {
     this.connectToDatabase();
+    this.dbSync()
   }
 
   private async connectToDatabase() {
@@ -24,6 +25,7 @@ export default class Database {
         acquire: config.DB_POOL_ACQUIRE,
         idle: config.DB_POOL_IDLE
       },
+      storage: "./dist/data/database.sqlite",
       models: [User, Author]
     });
 
@@ -35,5 +37,9 @@ export default class Database {
       .catch((err) => {
         console.error("Unable to connect to the Database:", err);
       });
+  }
+
+  private dbSync(){
+    this.sequelize?.sync({logging:false, force: false})
   }
 }

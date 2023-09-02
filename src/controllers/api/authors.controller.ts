@@ -5,7 +5,7 @@ export class AuthorsController {
 
   index(req: Request, res: Response) : void{
     Author.findAll().then((data)=>{
-      return res.json({ data: data });
+      return res.json({ data: data ? data : [] });
     });
   }
 
