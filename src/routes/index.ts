@@ -42,3 +42,4 @@ router.loadWebRoutes([homeRouter])
 router.loadApiRoutes(RouteApiVersion.V1, [homeApiRouter, authorsRouter])
 
 export default router.router
+

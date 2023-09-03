@@ -1,29 +1,27 @@
 import Author from '../../../models/Author';
 import { NextFunction, Request, Response } from "express";
 import { StatusCodes, ReasonPhrases } from 'http-status-codes';
-import { JsonController, Param, Body, Get, Post, Put, Delete, HttpCode } from 'routing-controllers';
+import { injectable } from 'inversify';
+import { StoreAuthorRequest } from '../../../validators/author.validator'
+import validateDecorator from '../../../validators'
 
-@JsonController('/api/v2/authors')
-export default class AuthorsController {
+@injectable()
+export class AuthorsController {
 
-  @Get()
-  public async index(req: Request, res: Response){
-    let prom = new Promise(async (resolve, reject)=>{
-      let pp = await Author.findAll({ raw: true })
-      resolve(pp)
-    })
-    // const authors =  Author.findAll().then((data)=>{
-
-    // })
-    return await prom
+  async index(req: Request, res: Response, next: NextFunction){
+    try{
+      const authors = await Author.findAll()
+      res.status(StatusCodes.OK).json({ data: authors ? authors : [] });
+    }
+    catch(error){
+      next(error)
+    }
   }
 
-  @Post()
-  @HttpCode(StatusCodes.CREATED)
+  @validateDecorator(StoreAuthorRequest, "body")
   async store(req: Request, res: Response, next: NextFunction) {
     try{
-      let {name} = req.body
-      const author = await Author.create({name})
+      const author = await Author.create({name: req.body.name})
       res.status(StatusCodes.CREATED).json({ data: author});
     }
     catch(error){
@@ -31,7 +29,6 @@ export default class AuthorsController {
     }
   }
 
-  @Get('/:id([0-9]+)')
   async show(req: Request, res: Response, next: NextFunction){
     try{
       const author = await Author.findByPk(req.params.id)
@@ -42,8 +39,6 @@ export default class AuthorsController {
     }
   }
 
-  @Put('/:id([0-9]+)')
-  @HttpCode(204)
   async update(req: Request, res: Response, next: NextFunction) {
     try{
       let {name} = req.body
@@ -57,8 +52,6 @@ export default class AuthorsController {
     }
   }
 
-  @Delete('/:id([0-9]+)')
-  @HttpCode(204)
   async delete(req: Request, res: Response, next: NextFunction) {
     try{
       await Author.destroy({
@@ -71,3 +64,5 @@ export default class AuthorsController {
     }
   }
 }
+
+

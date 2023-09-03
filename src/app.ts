@@ -4,16 +4,12 @@ import Database from "./database";
 import coreMiddleware from './middleware/core';
 import securityMiddleware from './middleware/security';
 import exceptionsMiddleware from './middleware/exceptions';
-import { createExpressServer } from 'routing-controllers';
-import AuthorsController from './controllers/api/v1/authors.controller'
 
 export default class App {
   public app: Application;
 
-  constructor() {
-    this.app = createExpressServer({
-      controllers: [AuthorsController], 
-    })
+  constructor(app: Application) {
+    this.app = app
     this.middleware();
     this.database();
     this.routes();

@@ -3,7 +3,7 @@ import express = require('express');
 const router = express.Router();
 
 //controllers
-import { AuthorsController } from "../../controllers/api/authors.controller";
+import { AuthorsController } from "../../controllers/api/v1/authors.controller";
 
 // Set the common part of the path for the routes in this router
 const base = '/authors'

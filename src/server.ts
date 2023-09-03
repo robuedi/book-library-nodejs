@@ -3,7 +3,7 @@ import config from "./config/config";
 import App from "./app";
 
 // const server: Application = express();
-const app: App = new App();
+const app: App = new App(express());
 
 app.server
   .listen(config.APP_PORT, "localhost", function () {
