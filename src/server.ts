@@ -2,10 +2,10 @@ import express, { Application } from "express";
 import config from "./config/config";
 import App from "./app";
 
-const server: Application = express();
-const app: App = new App(server);
+// const server: Application = express();
+const app: App = new App();
 
-server
+app.server
   .listen(config.APP_PORT, "localhost", function () {
     console.log(`Server is running on port ${config.APP_PORT}.`);
   })
