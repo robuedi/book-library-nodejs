@@ -42,8 +42,8 @@ export class AuthorsController implements IResourceController {
     }
   }
 
-  @validateDecorator(UpdateAuthorRequest, "body")
   @validateDecorator(AuthorIdRequest, "params")
+  @validateDecorator(UpdateAuthorRequest, "body")
   async update(req: Request, res: Response, next: NextFunction) {
     try{
       let authorUpdate: Partial<IAuthor> = {}
@@ -51,9 +51,16 @@ export class AuthorsController implements IResourceController {
         authorUpdate.name = req.body.name
       }
 
-      await Author.update(authorUpdate, {
+      let response = await Author.update(authorUpdate, {
         where: { id: req.params.id }
       });
+
+      //check if updates were made
+      let [updatedItems] = response
+      if(!updatedItems){
+        return res.status(StatusCodes.NOT_FOUND).json({ message: 'Not instances with that id were found' });
+      }
+
       return res.status(StatusCodes.NO_CONTENT).json({ message: ReasonPhrases.NO_CONTENT });
     }
     catch(error){
