@@ -2,9 +2,10 @@ import Author from '../../../models/author';
 import { NextFunction, Request, Response } from "express";
 import { StatusCodes, ReasonPhrases } from 'http-status-codes';
 import { injectable } from 'inversify';
-import { StoreAuthorRequest } from '../../../validators/author.validator'
+import { AuthorIdRequest, StoreAuthorRequest, UpdateAuthorRequest } from '../../../validators/author.validator'
 import validateDecorator from '../../../validators'
 import IResourceController from '../../resource.controller.interface';
+import IAuthor from '../../../models/author.shape';
 
 @injectable()
 export class AuthorsController implements IResourceController {
@@ -30,6 +31,7 @@ export class AuthorsController implements IResourceController {
     }
   }
 
+  @validateDecorator(AuthorIdRequest, "params")
   async show(req: Request, res: Response, next: NextFunction){
     try{
       const author = await Author.findByPk(req.params.id)
@@ -40,10 +42,16 @@ export class AuthorsController implements IResourceController {
     }
   }
 
+  @validateDecorator(UpdateAuthorRequest, "body")
+  @validateDecorator(AuthorIdRequest, "params")
   async update(req: Request, res: Response, next: NextFunction) {
     try{
-      let {name} = req.body
-      await Author.update({ name }, {
+      let authorUpdate: Partial<IAuthor> = {}
+      if(req.body?.name){
+        authorUpdate.name = req.body.name
+      }
+
+      await Author.update(authorUpdate, {
         where: { id: req.params.id }
       });
       return res.status(StatusCodes.NO_CONTENT).json({ message: ReasonPhrases.NO_CONTENT });
@@ -53,6 +61,7 @@ export class AuthorsController implements IResourceController {
     }
   }
 
+  @validateDecorator(AuthorIdRequest, "params")
   async delete(req: Request, res: Response, next: NextFunction) {
     try{
       await Author.destroy({
