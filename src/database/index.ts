@@ -2,7 +2,7 @@ import { Sequelize } from "sequelize-typescript";
 import  config from "../config/config";
 
 import User from "../models/User"
-import Author from "../models/Author"
+import Author from "../models/author"
 
 export default class Database {
   public sequelize: Sequelize | undefined;

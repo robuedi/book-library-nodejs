@@ -1,33 +1,23 @@
 import express, { Router } from "express"
-import authorsRouter from './api/authors.router'
-import { homeApiRouter } from './api/homeApi.router'
-import { homeRouter } from './web/home.router'
+import apiRoutes from './api'
+import { homeRouter } from './web'
 
-enum RouteApiVersion {
-  V1 = 'v1'
+enum RoutesBase {
+  WEB = '/',
+  API = '/api'
 }
 
 class Routes {
   private _router: Router
-  private static WEB_ROUTE: string = '/'
-  private static API_ROUTE: string = '/api'
   
   constructor() {
     this._router = express.Router()
   }
 
-  private loadRoutes(rootPath: string, routes: Array<express.Router>) {
-    routes.forEach((r) => {
-        this._router.use(`${rootPath}`, r)
+  public loadRoutes(rootPath: RoutesBase, routes: Array<express.Router>) {
+    routes.forEach((route) => {
+        this._router.use(`${rootPath}`, route)
     });
-  }
-
-  public loadWebRoutes(routes: Array<express.Router>){
-    this.loadRoutes(Routes.WEB_ROUTE, routes)
-  }
-  
-  public loadApiRoutes(version: RouteApiVersion, routes: Array<express.Router>){
-    this.loadRoutes(`${Routes.API_ROUTE}/${version}`, routes)
   }
 
   get router() : Router {
@@ -38,8 +28,8 @@ class Routes {
 const router = new Routes()
 
 //load the routes
-router.loadWebRoutes([homeRouter])
-router.loadApiRoutes(RouteApiVersion.V1, [homeApiRouter, authorsRouter])
+router.loadRoutes(RoutesBase.WEB, [homeRouter])
+router.loadRoutes(RoutesBase.API, apiRoutes)
 
 export default router.router
 

@@ -1,12 +1,13 @@
-import Author from '../../../models/Author';
+import Author from '../../../models/author';
 import { NextFunction, Request, Response } from "express";
 import { StatusCodes, ReasonPhrases } from 'http-status-codes';
 import { injectable } from 'inversify';
 import { StoreAuthorRequest } from '../../../validators/author.validator'
 import validateDecorator from '../../../validators'
+import IResourceController from '../../resource.controller.interface';
 
 @injectable()
-export class AuthorsController {
+export class AuthorsController implements IResourceController {
 
   async index(req: Request, res: Response, next: NextFunction){
     try{

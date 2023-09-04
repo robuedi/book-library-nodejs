@@ -16,3 +16,5 @@ namespace NodeJS {
         DB_POOL_IDLE: number
     }
 }
+
+export type ResourceRouteMethods = 'get' | 'post' | 'put' | 'delete'

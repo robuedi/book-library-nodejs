@@ -1,10 +1,11 @@
 import { Table, Model, Column, DataType } from "sequelize-typescript";
+import IAuthor from './author.shape';
 
 @Table({
   timestamps: true,
   tableName: "authors",
 })
-export default class Author extends Model {
+export default class Author extends Model implements  IAuthor {
   @Column({
     type: DataType.INTEGER,
     autoIncrement: true,
