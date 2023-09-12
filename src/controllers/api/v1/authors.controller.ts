@@ -3,9 +3,11 @@ import { NextFunction, Request, Response } from "express";
 import { StatusCodes, ReasonPhrases } from 'http-status-codes';
 import { injectable } from 'inversify';
 import { AuthorIdRequest, StoreAuthorRequest, UpdateAuthorRequest } from '../../../validators/author.validator'
+import modelDecorator from '../../../services/model-binding'
 import validateDecorator from '../../../validators'
 import IResourceController from '../../resource.controller.interface';
 import IAuthor from '../../../models/author.shape';
+import { ModelRequest } from '../../../types/requests';
 
 @injectable()
 export class AuthorsController implements IResourceController {
@@ -32,35 +34,27 @@ export class AuthorsController implements IResourceController {
   }
 
   @validateDecorator(AuthorIdRequest, "params")
-  async show(req: Request, res: Response, next: NextFunction){
-    try{
-      const author = await Author.findByPk(req.params.id)
-      res.status(StatusCodes.OK).json({ data: author});
-    }
-    catch(error){
-      next(error)
-    }
+  @modelDecorator(Author, 'id')
+  async show(req: ModelRequest, res: Response, next: NextFunction){
+    res.status(StatusCodes.OK).json({ data: req.model});
   }
 
   @validateDecorator(AuthorIdRequest, "params")
   @validateDecorator(UpdateAuthorRequest, "body")
-  async update(req: Request, res: Response, next: NextFunction) {
+  @modelDecorator(Author, 'id')
+  async update(req: ModelRequest, res: Response, next: NextFunction) {
     try{
+      //get data
       let authorUpdate: Partial<IAuthor> = {}
       if(req.body?.name){
         authorUpdate.name = req.body.name
       }
 
-      let response = await Author.update(authorUpdate, {
-        where: { id: req.params.id }
-      });
+      //save the data
+      req.model.update(authorUpdate)
+      req.model.save()
 
-      //check if updates were made
-      let [updatedItems] = response
-      if(!updatedItems){
-        return res.status(StatusCodes.NOT_FOUND).json({ message: 'Not instances with that id were found' });
-      }
-
+      //return response
       return res.status(StatusCodes.NO_CONTENT).json({ message: ReasonPhrases.NO_CONTENT });
     }
     catch(error){
@@ -69,11 +63,11 @@ export class AuthorsController implements IResourceController {
   }
 
   @validateDecorator(AuthorIdRequest, "params")
-  async delete(req: Request, res: Response, next: NextFunction) {
+  @modelDecorator(Author, 'id')
+  async delete(req: ModelRequest, res: Response, next: NextFunction) {
     try{
-      await Author.destroy({
-        where: { id: req.params.id }
-      });
+      //destroy the model
+      req.model.destroy()
       res.status(StatusCodes.NO_CONTENT).json({ message: ReasonPhrases.NO_CONTENT });
     }
     catch(error){
